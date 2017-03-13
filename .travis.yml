@@ -19,9 +19,12 @@ install:
 script:
   - hexo cl  #清除
   - hexo g  #生成
-  - hexo d
 
-#after_script:
+after_script:
+  - git config --global user.name "xurongyang"  #修改name
+  - git config --global user.email "rongyangxu@gmail.com"  #修改email
+  - sed -i'' "s~git@github.com:xurongyang/xurongyang.github.io.git~https://${GH_TOKEN}:x-oauth-basic@github.com/xurongyang/xurongyang.github.io.git~" _config.yml
+  - hexo deploy
 #  - cd ./public
 #  - git init
 #  - git config user.name "xurongyang"  #修改name
