@@ -13,7 +13,7 @@ categories:
 ### Executor接口
 ```Java
 public interface Executor {
-	void execute(Runnable command);
+    void execute(Runnable command);
 }
 ```
 ### 几个常见的线程池
@@ -27,12 +27,13 @@ public interface Executor {
 
 ```Java
 public interface ExecutorService extends Executor {
-	void shutdown();
-	List<Runnable> shutdownNow();
-	boolean isShutdown();
-	boolean isTerminated();
-	boolean awaitTermination(long timeout, Timeunit unit) throws InterruptedException;
-``` 
+    void shutdown();
+    List<Runnable> shutdownNow();
+    boolean isShutdown();
+    boolean isTerminated();
+    boolean awaitTermination(long timeout, Timeunit unit) throws InterruptedException;
+```
+
 ExecutorService的生命周期有三种状态：
 
 1. 运行
@@ -46,18 +47,20 @@ shutdownNow将执行粗暴的的关闭过程：尝试取消所有运行中的任
 Executor执行的任务有4个生命周期：1.创建，2.提交，3.开始，4.完成。
 
 Future表示一个任务的生命周期，提供了相应的方法来判断是否已经完成或者取消，以及获取任务的结果和取消任务等。
-####CompletionService
+#### CompletionService
+
 ```Java
 // 提交任务
 completionService.submit(new Callable())
 
 // 获取已完成的任务
 for (int t = 0; t < tasks.size();i++) {
-	Future f = completionService.take();
-	Result r = f.get()
+    Future f = completionService.take();
+    Result r = f.get()
 }
 ```
 #### invokeAll
+
 ```Java
 List<Future> futures = executorService.invokeAll(tasks, time, unit);
 ```
@@ -73,7 +76,7 @@ List<Future> futures = executorService.invokeAll(tasks, time, unit);
 #### 超时取消
 ![](/images/QQ20170312-184916@2x.png)
 #### 采用newTaskFor封装非标准的取消
-####关闭ExecutorService
+#### 关闭ExecutorService
 ```Java
 executorService.shutdown()
 executorService.awaitTermination(timeout, unit)
