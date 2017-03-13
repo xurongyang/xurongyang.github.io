@@ -7,8 +7,6 @@ git:
   submodules: false
 # Use sed to replace the SSH URL with the public URL, then initialize submodules
 before_install:
-  - git config --global user.name "xurongyang"  #修改name
-  - git config --global user.email "rongyangxu@gmail.com"  #修改email
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
 
@@ -21,17 +19,13 @@ script:
   - hexo g  #生成
 
 after_script:
-  - git config --global user.name "xurongyang"  #修改name
-  - git config --global user.email "rongyangxu@gmail.com"  #修改email
-  - sed -i'' "s~git@github.com:xurongyang/xurongyang.github.io.git~https://${GH_TOKEN}:x-oauth-basic@github.com/xurongyang/xurongyang.github.io.git~" _config.yml
-  - hexo deploy
-#  - cd ./public
-#  - git init
-#  - git config user.name "xurongyang"  #修改name
-#  - git config user.email "rongyangxu@gmail.com"  #修改email
-#  - git add .
-#  - git commit -m "update"
-#  - git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:master  #GH_TOKEN是在Travis中配置token的名称
+  - cd ./public
+  - git init
+  - git config user.name "xurongyang"  #修改name
+  - git config user.email "rongyangxu@gmail.com"  #修改email
+  - git add .
+  - git commit -m "update"
+  - git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:master  #GH_TOKEN是在Travis中配置token的名称
 
 branches:
   only:
