@@ -65,7 +65,7 @@ ok = true
 
 // Thread b
 if (ok) {
-	System.out.println(a)
+    System.out.println(a)
 }
 ```
 根据我们之前的描述，ok变量的读发生在写之后，倘若ok判断为true，那么输出的a的值一定是1。
@@ -74,12 +74,12 @@ j.u.c.Lock接口定义了六个方法：
 
 ```Java
 public interface Lock {
-	void lock();
-	void lockInterruptibly() throws InterruptedException;
-	boolean tryLock();
-	boolean tryLock(long time, TimeUnit unit) throws InterruptedException;
-	void unlock();
-	Condition newCondition();
+    void lock();
+    void lockInterruptibly() throws InterruptedException;
+    boolean tryLock();
+    boolean tryLock(long time, TimeUnit unit) throws InterruptedException;
+    void unlock();
+    Condition newCondition();
 }
 ```
 根据开头提到的Java Doc可知，lock方法对应内置锁的monitorEnter操作，unlock方法对应内置锁的monitorExit操作。由Happens-before规则，unlock操作发生在lock操作之前，unlock操作之前的内存写操作对lock操作是可见的。不同于synchronized关键字是由JVM支持的，Lock接口的实现类都是由Java代码完成的，那么**可见性**是如何保证的？
@@ -90,22 +90,22 @@ public interface Lock {
 
 ```Java
 public void lock() {
-	sync.lock();
+    sync.lock();
 }
 
 final void lock() {
-	acquire(1);
+    acquire(1);
 }
 
 public void unlock() {
-	sync.release(1);
+    sync.release(1);
 }
 ```
 lock方法和unlock方法都代理给了sync对象，根据ReentrantLock的构造参数，sync对象可以是FairSync（公平锁）或者是NonfairSync（非公平锁）。
 
 ```Java
 public ReentrantLock(boolean fair) {
-	sync = fair ? new FairSync() : new NonfairSync();
+    sync = fair ? new FairSync() : new NonfairSync();
 }
 ```
 
@@ -189,12 +189,12 @@ protected final boolean tryRelease(int releases) {
 private volatile int state;
 
 void lock() {
-	read state
-	write state
+    read state
+    write state
 }
 
 void unlock() {
-	write state
+    write state
 }
 ```
 根据Happens-before规则：volatile域的写操作之前的操作结果对读操作是可见的，可知unlock操作发生在lock操作之前，unlock操作之前的内存写操作对lock操作是可见的，由此保证了j.u.c.Lock接口的实现类能实现和synchronized关键字一样的内存数据可见性。
