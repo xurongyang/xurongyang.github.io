@@ -50,26 +50,26 @@ Thread b中的循环可能会一直持续下去，因为Thread a设置的ok的�
 
 ```Java
 public class Counter {
-	private static int counter = 0;
-	
-	public static int incrCounter1() {
-		return counter++;
-	}
-	
-	public synchronized static int incrCounter2() {
-		return counter++;
-	}
-	
-	private static ReentrantLock lock = new ReentrantLock();
-	
-	public static int incrCounter3() {
-		try {
-			lock.lock();
-			return counter++;
-		} finally {
-			lock.unlock();
-		}
-	}
+    private static int counter = 0;
+    
+    public static int incrCounter1() {
+        return counter++;
+    }
+    
+    public synchronized static int incrCounter2() {
+        return counter++;
+    }
+    
+    private static ReentrantLock lock = new ReentrantLock();
+    
+    public static int incrCounter3() {
+        try {
+            lock.lock();
+            return counter++;
+        } finally {
+            lock.unlock();
+        }
+    }
 }
 ```
 很明显，incrCounter1不是线程安全的，incrCounter2和incrCounter3分别利用内置锁synchronized和ReentrantLock来保证了其它线程能看到最新的counter的值。
@@ -223,7 +223,7 @@ private volatile int state;
 void lock() {
     read state
     if (获取到锁)
-    	write state
+        write state
 }
 
 void unlock() {
