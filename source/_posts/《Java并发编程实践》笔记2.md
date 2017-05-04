@@ -32,6 +32,7 @@ public interface ExecutorService extends Executor {
     boolean isShutdown();
     boolean isTerminated();
     boolean awaitTermination(long timeout, Timeunit unit) throws InterruptedException;
+}
 ```
 
 ExecutorService的生命周期有三种状态：
