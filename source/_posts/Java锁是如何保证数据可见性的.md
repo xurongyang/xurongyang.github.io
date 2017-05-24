@@ -3,6 +3,7 @@ title: Java锁是如何保证数据可见性的
 date: 2017-03-06 14:53:56
 tags:
 ---
+### 引言
 在 [java.util.concurrent.locks.Lock](https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/locks/Lock.html) 接口的Javadoc中有这样一段话：
 > All Lock implementations must enforce the ***same memory synchronization semantics as provided by the built-in monitor lock*** :
 
@@ -13,7 +14,7 @@ tags:
 
 简而言之，j.u.c.locks.Lock接口的实现类具有和synchronized关键字一样的内存同步语义。
 
-synchronized关键字的用法众所周知，它可以对方法或代码块加锁，同一时刻最多只有一个线程能执行方法或者代码块中的代码。然而，synchronized不仅支持互斥访问，它还能确保一个线程在同步方法或同步块之前或之中的内存写入对其它线程是可见的。
+synchronized关键字的用法众所周知，它可以对方法或代码块加锁，同一时刻最多只有一个线程能执行方法或者代码块中的代码。然而，synchronized不仅支持线程间的互斥访问，它还能确保一个线程在同步方法或同步块之前或之中的内存写入对其它线程是可见的。
 
 同样，Lock接口实现类可以通过加锁和解锁操作实现线程间的互斥访问，同时能够保证内存中数据的可见性。
 
@@ -52,14 +53,17 @@ Thread b中的循环可能会一直持续下去，因为Thread a设置的ok的�
 public class Counter {
     private static int counter = 0;
     
+    // 第一种方式：没有做同步操作
     public static int incrCounter1() {
         return counter++;
     }
     
+    // 第二种方式：使用synchronized同步
     public synchronized static int incrCounter2() {
         return counter++;
     }
     
+    // 第三种方式：使用ReentrantLock同步
     private static ReentrantLock lock = new ReentrantLock();
     
     public static int incrCounter3() {
@@ -222,7 +226,7 @@ private volatile int state;
 
 void lock() {
     read state
-    if (获取到锁)
+    if (can get lock)
         write state
 }
 
