@@ -84,7 +84,7 @@ Java内存模型一共定义了八条Happens-before规则，和Java锁相关的�
 2. 一个volatile变量的写操作发生在这个volatile变量随后的读操作之前
 
 #### synchronized提供的可见性
-以synchronized代码块为例：
+synchronized有两种用法，一种可以用来修饰方法，另外一种可以用来修饰代码块。我们以synchronized代码块为例：
 
 ```Java
 synchronized(SomeObject) {
@@ -101,7 +101,7 @@ synchronized(SomeObject) {
 #### j.u.c.locks.Lock提供的可见性
 
 ##### volatile关键字的可见性
-对第一个代码样例做一下改造，用volatile关键字来修饰ok：
+对第一个代码样例做一下改造，用volatile关键字来修饰ok，其余不变：
 
 ```Java
 volatile boolean ok = false
@@ -120,7 +120,7 @@ if (ok) {
 根据上述Happens-before规则第二条：
 > 一个volatile变量的写操作发生在这个volatile变量随后的读操作之前
  
-线程a设置ok的值为true，倘若线程b看到ok的值为true，那么可以保证输出的a的值一定是1。
+假设线程a将ok的值设置为true，那么如果线程b看到ok的值为true，一定可以保证输出的a的值是1。
 
 ##### ReentrantLock可见性保证的具体实现
 j.u.c.locks.Lock接口定义了六个方法：
@@ -153,7 +153,7 @@ public void unlock() {
     sync.release(1);
 }
 ```
-lock方法和unlock方法的具体实现都代理给了sync对象，根据ReentrantLock的构造参数，sync对象可以是FairSync（公平锁）或者是NonfairSync（非公平锁），以FairSync为例（NonfairSync原理类似）：
+lock方法和unlock方法的具体实现都代理给了sync对象，来看一下sync对象的定义：
 
 ```Java
 abstract static class Sync extends AbstractQueuedSynchronizer
@@ -164,7 +164,10 @@ public ReentrantLock(boolean fair) {
     sync = fair ? new FairSync() : new NonfairSync();
 }
 ```
-从上面代码中可以看出，lock方法和unlock方法的具体实现都是由acquire和release方法完成的，而FairSync类中并没有定义acquire方法和release方法，这两个方法都是在AbstractQueuedSynchronizer类中实现的。
+
+根据ReentrantLock的构造参数，sync对象可以是FairSync（公平锁）或者是NonfairSync（非公平锁），我们以FairSync为例（NonfairSync原理类似）来说明。
+
+从上面代码中可以看出，lock方法和unlock方法的具体实现都是由acquire和release方法完成的，而FairSync类中并没有定义acquire方法和release方法，这两个方法都是在Sync的父类AbstractQueuedSynchronizer类中实现的。
 
 ```Java
 public final void acquire(int arg) {
@@ -192,7 +195,7 @@ release方法的大致步骤：tryRelease会尝试释放锁，如果释放成功
 
 我们可以看出，获取锁和释放锁的具体操作是在tryAcquire和tryRelease中实现的，而tryAcquire和tryRelease在父类AbstractQueuedSynchronizer中没有定义，留给子类FairSync去实现。
 
-我们来看一下tryAcquire和tryRelease的具体实现：
+我们来看一下FairSync类的tryAcquire和tryRelease的具体实现：
 
 ```Java
 // state变量定义在AbstractQueuedSynchronizer中，表示同步状态。
@@ -236,7 +239,7 @@ protected final boolean tryRelease(int releases) {
     return free;
 }
 ```
-从上面的代码中可以看到有一个volatile state变量，这个变量用来表示同步状态，获取锁时会先读取state的值，并且把值从0修改为1，表示已经成功获取到锁。当释放锁时，也会先读取state的值，并进行修改。也就是说，无论是成功获取到锁还是成功释放掉锁，都会先读取state变量的值，再进行修改。
+从上面的代码中可以看到有一个volatile state变量，这个变量用来表示同步状态，获取锁时会先读取state的值，获取成功后会把值从0修改为1。当释放锁时，也会先读取state的值然后进行修改。也就是说，无论是成功获取到锁还是成功释放掉锁，都会先读取state变量的值，再进行修改。
 
 我们将上面的代码做个简化，只留下关键步骤：
 
@@ -259,9 +262,9 @@ void unlock() {
 我们注意到上述提到的Happens-before规则的第二条：
 > 一个volatile变量的写操作发生在这个volatile变量随后的读操作之前
 
-可以推测出，当线程b执行获取锁操作，读取了state变量值后，线程a在写入state变量之前的任何操作结果对线程b都是可见的。
+可以推测出，当线程b执行获取锁操作，读取了state变量的值后，线程a在写入state变量之前的任何操作结果对线程b都是可见的。
 
 由此，我们可以得出结论Lock接口的实现类能实现和synchronized内置锁一样的内存数据可见性。
 
 ### 结束语
-ReentrantLock及其它Lock接口实现类实现内存数据可见性的方式相对比较隐秘，借助了volatile关键字间接的实现了可见性。其实不光是Lock接口实现类，因为j.u.c包中大部分同步器的实现都是基于AbstractQueuedSynchronizer类来实现的，因此这些同步器也能够提供一定的可见性，有兴趣的同学可以尝试用类似的思路去分析。
+ReentrantLock及其它Lock接口实现类实现内存数据可见性的方式相对比较隐秘，借助了volatile关键字间接地实现了可见性。其实不光是Lock接口实现类，因为j.u.c包中大部分同步器的实现都是基于AbstractQueuedSynchronizer类来实现的，因此这些同步器也能够提供一定的可见性，有兴趣的同学可以尝试用类似的思路去分析。
