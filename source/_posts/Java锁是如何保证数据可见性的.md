@@ -9,7 +9,7 @@ tags:
 
 > * A successful lock operation acts like a successful monitorEnter action
 > * A successful unlock operation acts like a successful monitorExit action
- 
+
 > Unsuccessful locking and unlocking operations, and reentrant locking/unlocking operations, do not require any memory synchronization effects.
 
 这段话的核心是j.u.c.locks.Lock接口的实现类具有和synchronized内置锁一样的内存同步语义。
@@ -119,7 +119,7 @@ if (ok) {
 ```
 根据上述Happens-before规则第二条：
 > 一个volatile变量的写操作发生在这个volatile变量随后的读操作之前
- 
+
 假设线程a将ok的值设置为true，那么如果线程b看到ok的值为true，一定可以保证输出的a的值是1。
 
 ##### ReentrantLock可见性保证的具体实现
