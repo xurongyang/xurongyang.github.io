@@ -1,3 +1,11 @@
+---
+title: Synchronized实现
+date: 2017-09-01 16:55:12
+tags:
+categories: 
+- 并发
+---
+
 ### synchronized用法
 
 synchronized是Java语言中用于线程间并发互斥访问的关键字，通常有两种用法。
@@ -125,11 +133,11 @@ public static synchronized void syncTask();
 
 在 HotSpot 虚拟机中，对象在内存中存储布局分为 3 块区域：对象头（Header）、实例数据（Instance Data）、对齐填充。
 
-![java-object-header](/Users/xurongyang/Workspace/Hexo/source/images/java-object.png)
+![java-object-header](../images/java-object.png)
 
 HotSpot 虚拟机的对象头包括两部分（非数组对象）信息，如下图所示：
 
-![java-object-header](/Users/xurongyang/Workspace/Hexo/source/images/java-object-header.png)
+![java-object-header](../images/java-object-header.png)
 
 * 第一部分用于存储对象自身的**运行时数据**，如哈希码（HashCode）、GC 分代年龄、锁状态标志、线程持有的锁、偏向线程 ID、偏向时间戳、对象分代年龄，这部分信息称为“Mark Word”；Mark Word 被设计成一个非固定的数据结构以便在极小的空间内存储尽量多的信息，它会根据自己的状态复用自己的存储空间。
 
@@ -140,7 +148,7 @@ HotSpot 虚拟机的对象头包括两部分（非数组对象）信息，如下
 
 在 32 位系统下，存放 Class 指针的空间大小是 4 字节，Mark Word 空间大小也是4字节，因此头部就是 8 字节，如果是数组就需要再加 4 字节表示数组的长度，如下表所示：
 
-![java-object-header-size](/Users/xurongyang/Workspace/Hexo/source/images/java-object-header-size.png)
+![java-object-header-size](../images/java-object-header-size.png)
 
 ##### 实例数据
 
