@@ -14,11 +14,11 @@ categories:
 ![](/images/QQ20170209-165209@2x.png)
 
 * status register, which can be read to see the current status
-of the device.
+  of the device.
 * command register, to tell the device to perform a certain
-task.
+  task.
 * a data register to pass data to the device, or get data from
-the device.
+  the device.
 
 #### 设备协议
 	While (STATUS == BUSY)
@@ -73,7 +73,7 @@ Inode节点中的block字段包含了该文件所有block的地址，为了支�
 > Journaling
 
 1. Data write: Write data to final location; wait for completion
-(the wait is optional; see below for details).
+   (the wait is optional; see below for details).
 2. Journal metadata write: Write the begin block and metadata to the log; wait for writes to complete.
 3. Journal commit: Write the transaction commit block (containing TxE) to the log; wait for the write to complete; the transaction (including data) is now committed.
 4. Checkpoint metadata: Write the contents of the metadata update to their final locations within the file system.
