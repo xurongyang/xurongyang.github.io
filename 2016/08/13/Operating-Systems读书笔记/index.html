@@ -1,0 +1,1062 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Operating Systems,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="《Operating Systems:Three Easy Pieces》 操作系统的核心问题 HOW DOES THE OPERATING SYSTEM VIRTUALIZE RESOURCES?   虚拟化CPU支持多任务同时执行 虚拟化内存提供无限大的内存空间，进程内存互相不影响   HOW TO BUILD CORRECT CONCURRENT PROGRAMS?   HOW TO STO">
+<meta name="keywords" content="Operating Systems">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Operating Systems读书笔记(Virtualization)">
+<meta property="og:url" content="https://xurongyang.github.io/2016/08/13/Operating-Systems读书笔记/index.html">
+<meta property="og:site_name" content="rongyang的技术角落">
+<meta property="og:description" content="《Operating Systems:Three Easy Pieces》 操作系统的核心问题 HOW DOES THE OPERATING SYSTEM VIRTUALIZE RESOURCES?   虚拟化CPU支持多任务同时执行 虚拟化内存提供无限大的内存空间，进程内存互相不影响   HOW TO BUILD CORRECT CONCURRENT PROGRAMS?   HOW TO STO">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170130-221344@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170130-222049@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170130-222252@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170130-222716@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170204-115301@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170131-163101@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170204-140202@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170204-165637@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170205-105419@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/WX20170205-191412@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170205-210855@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170205-212800@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170205-215102@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170205-215500@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170206-191917@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170206-192852@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170206-194007@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170206-194834@2x.png">
+<meta property="og:image" content="https://xurongyang.github.io/images/QQ20170207-132350@2x.png">
+<meta property="og:updated_time" content="2019-11-29T02:34:27.457Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Operating Systems读书笔记(Virtualization)">
+<meta name="twitter:description" content="《Operating Systems:Three Easy Pieces》 操作系统的核心问题 HOW DOES THE OPERATING SYSTEM VIRTUALIZE RESOURCES?   虚拟化CPU支持多任务同时执行 虚拟化内存提供无限大的内存空间，进程内存互相不影响   HOW TO BUILD CORRECT CONCURRENT PROGRAMS?   HOW TO STO">
+<meta name="twitter:image" content="https://xurongyang.github.io/images/QQ20170130-221344@2x.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xurongyang.github.io/2016/08/13/Operating-Systems读书笔记/">
+
+
+
+
+
+  <title> Operating Systems读书笔记(Virtualization) | rongyang的技术角落 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">rongyang的技术角落</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn From History</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://xurongyang.github.io/2016/08/13/Operating-Systems读书笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xurongyang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="rongyang的技术角落">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Operating Systems读书笔记(Virtualization)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-13T13:25:34+00:00">
+                2016-08-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/操作系统/" itemprop="url" rel="index">
+                    <span itemprop="name">操作系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/08/13/Operating-Systems读书笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/13/Operating-Systems读书笔记/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><a href="https://book.douban.com/subject/19973015/" target="_blank" rel="noopener">《Operating Systems:Three Easy Pieces》</a></p>
+<h3 id="操作系统的核心问题"><a href="#操作系统的核心问题" class="headerlink" title="操作系统的核心问题"></a>操作系统的核心问题</h3><blockquote>
+<p>HOW DOES THE OPERATING SYSTEM VIRTUALIZE RESOURCES?</p>
+</blockquote>
+<ul>
+<li>虚拟化CPU支持多任务同时执行</li>
+<li>虚拟化内存提供无限大的内存空间，进程内存互相不影响</li>
+</ul>
+<blockquote>
+<p>HOW TO BUILD CORRECT CONCURRENT PROGRAMS?</p>
+</blockquote>
+<blockquote>
+<p>HOW TO STORE DATA PERSISITENTLY?</p>
+</blockquote>
+<h3 id="CPU虚拟化"><a href="#CPU虚拟化" class="headerlink" title="CPU虚拟化"></a>CPU虚拟化</h3><h4 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h4><blockquote>
+<p>HOW TO PROVIDE THE ILLUSION OF MANY CPUS?</p>
+</blockquote>
+<p>进程的上下文：</p>
+<ol>
+<li>内存，指令与数据</li>
+<li>寄存器</li>
+<li>PC,Stack Pointer，Frame Pointer</li>
+<li>I/O </li>
+</ol>
+<p><img src="/images/QQ20170130-221344@2x.png" alt></p>
+<p>堆，栈</p>
+<p>在unix系统中，每个进程都会默认有3个文件描述符，标准输入，输出，错误</p>
+<p>main方法？</p>
+<p>进程的状态：</p>
+<ol>
+<li>运行</li>
+<li>准备</li>
+<li>阻塞，A common example: when a process initiates an I/O request to a disk, it becomes blocked and thus some other process can use the processor.</li>
+</ol>
+<h5 id="进程状态转换图"><a href="#进程状态转换图" class="headerlink" title="进程状态转换图"></a>进程状态转换图</h5><p><img src="/images/QQ20170130-222049@2x.png" alt><br><img src="/images/QQ20170130-222252@2x.png" alt></p>
+<h5 id="进程数据结构"><a href="#进程数据结构" class="headerlink" title="进程数据结构"></a>进程数据结构</h5><p><img src="/images/QQ20170130-222716@2x.png" alt></p>
+<h4 id="虚拟化CPU的挑战"><a href="#虚拟化CPU的挑战" class="headerlink" title="虚拟化CPU的挑战"></a>虚拟化CPU的挑战</h4><blockquote>
+<p>HOW TO EFFICIENTLY VIRTUALIZE THE CPU WITH CONTROL? </p>
+</blockquote>
+<h5 id="限制性行为"><a href="#限制性行为" class="headerlink" title="限制性行为"></a>限制性行为</h5><ul>
+<li>用户模式</li>
+<li>内核模式</li>
+</ul>
+<p>操作系统在启动的时候注册系统调用表，操作系统会通知硬件当发生系统调用时应该去执行什么代码。</p>
+<h5 id="进程切换"><a href="#进程切换" class="headerlink" title="进程切换"></a>进程切换</h5><blockquote>
+<p>HOW TO REGAIN CONTROL OF THE CPU</p>
+<p>HOW TO GAIN CONTROL WITHOUT COOPERATION</p>
+</blockquote>
+<p>利用timer interrupt，操作系统可以在任何情况下获得控制权。这个时间设备可被编程实现为每n毫秒进行一次中断，当中断发生时，当前正在运行的进程会停止，而一个之前被设置好的OS handler会开始执行，这样操作系统就获得了CPU的控制权，然后就可以停止当前进程，并开始另一个进程。</p>
+<h5 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h5><p><img src="/images/QQ20170204-115301@2x.png" alt></p>
+<h6 id="保存上下文"><a href="#保存上下文" class="headerlink" title="保存上下文"></a>保存上下文</h6><p><img src="/images/QQ20170131-163101@2x.png" alt></p>
+<h4 id="进程调度策略"><a href="#进程调度策略" class="headerlink" title="进程调度策略"></a>进程调度策略</h4><blockquote>
+<p>HOW TO DEVELOP SCHEDULING POLICY</p>
+</blockquote>
+<h5 id="评价标准"><a href="#评价标准" class="headerlink" title="评价标准"></a>评价标准</h5><p>The turnaround time of a job is defined<br>as the time at which the job completes minus the time at which the job<br>arrived in the system</p>
+<p>T<sub>turnaround=T<sub>completion</sub>-T<sub>arrival</sub></sub></p>
+<p>Response time is defined as the time from when the job arrives in a<br>system to the first time it is scheduled</p>
+<p>T<sub>response</sub>=T<sub>firstturn</sub>-T<sub>arrival</sub></p>
+<h5 id="具体策略"><a href="#具体策略" class="headerlink" title="具体策略"></a>具体策略</h5><ul>
+<li>FIFO（延时太大，公平）</li>
+<li>Shortest Job First（响应时间）</li>
+<li>Shortest Time-to-Completion First（响应时间）</li>
+<li>Round Robin（实时）</li>
+</ul>
+<h5 id="The-Multi-Level-Feedback-Queue"><a href="#The-Multi-Level-Feedback-Queue" class="headerlink" title="The Multi-Level Feedback Queue"></a>The Multi-Level Feedback Queue</h5><blockquote>
+<p>HOW TO SCHEDULE WITHOUT PERFECT KNOWLEDGE?</p>
+</blockquote>
+<h6 id="基本规则"><a href="#基本规则" class="headerlink" title="基本规则"></a>基本规则</h6><ul>
+<li><strong>Rule 1:</strong> If Priority(A) &gt; Priority(B), A runs (B doesn’t).</li>
+<li><strong>Rule 2:</strong> If Priority(A) = Priority(B), A &amp; B run in RR.</li>
+<li><strong>Rule 3:</strong> When a job enters the system, it is placed at the highest priority (the topmost queue).</li>
+<li><strong>Rule 4:</strong> Once a job uses up its time allotment at a given level (regardless of how many times it has given up the CPU), its priority is reduced (i.e., it moves down one queue).</li>
+<li><strong>Rule 5:</strong> After some time period S, move all the jobs in the system to the topmost queue.</li>
+</ul>
+<p><img src="/images/QQ20170204-140202@2x.png" alt></p>
+<h5 id="Lottery-Scheduling"><a href="#Lottery-Scheduling" class="headerlink" title="Lottery Scheduling"></a>Lottery Scheduling</h5><blockquote>
+<p> HOW TO SHARE THE CPU PROPORTIONALLY</p>
+</blockquote>
+<p>完全准确的按照权重调度，比如A:B:C=100:50:250，用一个大整数比如10000除以它们，分别是100，200和40，每run一次加100，200和40</p>
+<pre><code>current = remove_min(queue); // pick client with minimum pass
+schedule(current); // use resource for quantum
+current-&gt;pass += current-&gt;stride; // compute next     pass using stride
+insert(queue, current); // put back into the queue
+</code></pre><p><img src="/images/QQ20170204-165637@2x.png" alt></p>
+<h5 id="Multiprocessor-Scheduling"><a href="#Multiprocessor-Scheduling" class="headerlink" title="Multiprocessor Scheduling"></a>Multiprocessor Scheduling</h5><blockquote>
+<p>HOW TO SCHEDULE JOBS ON MULTIPLE CPUS</p>
+</blockquote>
+<h3 id="内存虚拟化"><a href="#内存虚拟化" class="headerlink" title="内存虚拟化"></a>内存虚拟化</h3><blockquote>
+<p>HOW TO VIRTUALIZE MEMORY<br>HOW TO EFFICIENTLY AND FLEXIBLY VIRTUALIZE MEMORY</p>
+</blockquote>
+<p>为每个进程创造出一个从地址0开始，几乎无限大的内存空间。所以，需要翻译地址，虚拟地址-&gt;物理地址，还有之后的虚拟内存。</p>
+<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><p><img src="/images/QQ20170205-105419@2x.png" alt></p>
+<p>堆和栈的扩张方向正好相反，堆从小到大，栈从大到小<br>JVM地址空间？<br><img src="/images/WX20170205-191412@2x.png" alt></p>
+<h4 id="地址翻译"><a href="#地址翻译" class="headerlink" title="地址翻译"></a>地址翻译</h4><ul>
+<li>base，基地址</li>
+<li>bound(limit)，边界，防止地址越界</li>
+</ul>
+<p>physical address = virtual address + base</p>
+<h4 id="空间分配"><a href="#空间分配" class="headerlink" title="空间分配"></a>空间分配</h4><p>操作系统需要维护空闲内存列表，当进程创建的时候，找到空闲的内存块分配给它。当进程销毁的时候，从进程回收内存，放入空闲内存列表。</p>
+<h4 id="操作系统与硬件的交互"><a href="#操作系统与硬件的交互" class="headerlink" title="操作系统与硬件的交互"></a>操作系统与硬件的交互</h4><p><img src="/images/QQ20170205-210855@2x.png" alt></p>
+<h4 id="内存分段"><a href="#内存分段" class="headerlink" title="内存分段"></a>内存分段</h4><p>整个进程没必要物理上在一起，代码段，堆和栈可以物理隔离，这样可以保持灵活性，同时降低对大块内存的要求。<br><img src="/images/QQ20170205-212800@2x.png" alt><br>如何知道是哪个段？通过在虚拟地址中加两位来解决。</p>
+<p>栈需要指明扩展的方向，再加一位。</p>
+<p><img src="/images/QQ20170205-215102@2x.png" alt><br>保护位再加一位</p>
+<p><img src="/images/QQ20170205-215500@2x.png" alt></p>
+<h4 id="内存碎片问题"><a href="#内存碎片问题" class="headerlink" title="内存碎片问题"></a>内存碎片问题</h4><blockquote>
+<p>HOW TO MANAGE FREE SPACE</p>
+</blockquote>
+<p>FreeList策略</p>
+<ul>
+<li>Best Fit</li>
+<li>Worst Fit</li>
+<li>First Fit</li>
+<li>Next Fit</li>
+</ul>
+<h4 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h4><blockquote>
+<p>HOW TO VIRTUALIZE MEMORY WITH PAGES</p>
+</blockquote>
+<p>分段可以给每一个进程分配不同的线性地址空间，而分页可以把同一线性地址空间映射到不同的物理空间</p>
+<p>固定大小使得空闲空间管理变得简单，分页和分段的区别在于：分页会造成页内空间浪费，分段会造成段外空间碎片化，相对而言，分页的问题更好解决。</p>
+<h4 id="分页地址翻译"><a href="#分页地址翻译" class="headerlink" title="分页地址翻译"></a>分页地址翻译</h4><p><img src="/images/QQ20170206-191917@2x.png" alt></p>
+<blockquote>
+<p>HOW TO SPEED UP ADDRESS TRANSLATION</p>
+<p>TLB</p>
+</blockquote>
+<p><img src="/images/QQ20170206-192852@2x.png" alt></p>
+<blockquote>
+<p>HOW TO MANAGE TLB CONTENTS ON A CONTEXT SWITCH</p>
+</blockquote>
+<p><img src="/images/QQ20170206-194007@2x.png" alt></p>
+<blockquote>
+<p>HOW TO DESIGN TLB REPLACEMENT POLICY</p>
+<p>LRU</p>
+</blockquote>
+<blockquote>
+<p>HOW TO MAKE PAGE TABLES SMALLER?</p>
+</blockquote>
+<p><img src="/images/QQ20170206-194834@2x.png" alt> </p>
+<h4 id="交换分区"><a href="#交换分区" class="headerlink" title="交换分区"></a>交换分区</h4><p>Present Bit代表是否交换</p>
+<p><img src="/images/QQ20170207-132350@2x.png" alt><br>操作系统会维护high watermark (HW)和low watermark (LW)，当内存低于LW，会启动后台线程swap daemon or page daemon进行内存页清理，直到达到HW。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Operating-Systems/" rel="tag"># Operating Systems</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/05/数据链路层/" rel="prev" title="数据链路层">
+                数据链路层 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/13/Operating-Systems读书笔记/" data-title="Operating Systems读书笔记(Virtualization)" data-url="https://xurongyang.github.io/2016/08/13/Operating-Systems读书笔记/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="xurongyang">
+          <p class="site-author-name" itemprop="name">xurongyang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/thinkingxu" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xurongyang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#操作系统的核心问题"><span class="nav-number">1.</span> <span class="nav-text">操作系统的核心问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU虚拟化"><span class="nav-number">2.</span> <span class="nav-text">CPU虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程"><span class="nav-number">2.1.</span> <span class="nav-text">进程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#进程状态转换图"><span class="nav-number">2.1.1.</span> <span class="nav-text">进程状态转换图</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#进程数据结构"><span class="nav-number">2.1.2.</span> <span class="nav-text">进程数据结构</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚拟化CPU的挑战"><span class="nav-number">2.2.</span> <span class="nav-text">虚拟化CPU的挑战</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#限制性行为"><span class="nav-number">2.2.1.</span> <span class="nav-text">限制性行为</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#进程切换"><span class="nav-number">2.2.2.</span> <span class="nav-text">进程切换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#流程"><span class="nav-number">2.2.3.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#保存上下文"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">保存上下文</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程调度策略"><span class="nav-number">2.3.</span> <span class="nav-text">进程调度策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#评价标准"><span class="nav-number">2.3.1.</span> <span class="nav-text">评价标准</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#具体策略"><span class="nav-number">2.3.2.</span> <span class="nav-text">具体策略</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#The-Multi-Level-Feedback-Queue"><span class="nav-number">2.3.3.</span> <span class="nav-text">The Multi-Level Feedback Queue</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#基本规则"><span class="nav-number">2.3.3.1.</span> <span class="nav-text">基本规则</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Lottery-Scheduling"><span class="nav-number">2.3.4.</span> <span class="nav-text">Lottery Scheduling</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Multiprocessor-Scheduling"><span class="nav-number">2.3.5.</span> <span class="nav-text">Multiprocessor Scheduling</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存虚拟化"><span class="nav-number">3.</span> <span class="nav-text">内存虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#地址空间"><span class="nav-number">3.1.</span> <span class="nav-text">地址空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#地址翻译"><span class="nav-number">3.2.</span> <span class="nav-text">地址翻译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空间分配"><span class="nav-number">3.3.</span> <span class="nav-text">空间分配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#操作系统与硬件的交互"><span class="nav-number">3.4.</span> <span class="nav-text">操作系统与硬件的交互</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存分段"><span class="nav-number">3.5.</span> <span class="nav-text">内存分段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存碎片问题"><span class="nav-number">3.6.</span> <span class="nav-text">内存碎片问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分页"><span class="nav-number">3.7.</span> <span class="nav-text">分页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分页地址翻译"><span class="nav-number">3.8.</span> <span class="nav-text">分页地址翻译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#交换分区"><span class="nav-number">3.9.</span> <span class="nav-text">交换分区</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xurongyang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"rongyanggithub"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>

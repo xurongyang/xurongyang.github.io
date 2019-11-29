@@ -1,0 +1,963 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="网络,IP,TCP,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="From：http://blog.csdn.net/zeroblack/article/details/12851607 数据链路层什么是数据链路层？答：数据链路层是计算机网络的中的低层（OSI模型中的第二层），可简单的理解为是数据通道。主要作用是为上层（网络层）提供带有差错检测的不可靠传输服务。 数据链路和链路有什么区别？答：链路是从一个结点到相邻结点的一段物理线路，而中间没有其他的交换结点。说">
+<meta name="keywords" content="网络,IP,TCP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据链路层">
+<meta property="og:url" content="https://xurongyang.github.io/2017/01/05/数据链路层/index.html">
+<meta property="og:site_name" content="rongyang的技术角落">
+<meta property="og:description" content="From：http://blog.csdn.net/zeroblack/article/details/12851607 数据链路层什么是数据链路层？答：数据链路层是计算机网络的中的低层（OSI模型中的第二层），可简单的理解为是数据通道。主要作用是为上层（网络层）提供带有差错检测的不可靠传输服务。 数据链路和链路有什么区别？答：链路是从一个结点到相邻结点的一段物理线路，而中间没有其他的交换结点。说">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://xurongyang.github.io/images/20131018135011593.jpeg">
+<meta property="og:image" content="https://xurongyang.github.io/images/20131021091815234.jpeg">
+<meta property="og:image" content="https://xurongyang.github.io/images/20131021092327312.jpeg">
+<meta property="og:updated_time" content="2019-11-29T02:34:27.457Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据链路层">
+<meta name="twitter:description" content="From：http://blog.csdn.net/zeroblack/article/details/12851607 数据链路层什么是数据链路层？答：数据链路层是计算机网络的中的低层（OSI模型中的第二层），可简单的理解为是数据通道。主要作用是为上层（网络层）提供带有差错检测的不可靠传输服务。 数据链路和链路有什么区别？答：链路是从一个结点到相邻结点的一段物理线路，而中间没有其他的交换结点。说">
+<meta name="twitter:image" content="https://xurongyang.github.io/images/20131018135011593.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xurongyang.github.io/2017/01/05/数据链路层/">
+
+
+
+
+
+  <title> 数据链路层 | rongyang的技术角落 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">rongyang的技术角落</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Learn From History</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://xurongyang.github.io/2017/01/05/数据链路层/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="xurongyang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="rongyang的技术角落">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                数据链路层
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-05T19:52:05+00:00">
+                2017-01-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/01/05/数据链路层/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/05/数据链路层/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>From：<a href="http://blog.csdn.net/zeroblack/article/details/12851607" target="_blank" rel="noopener">http://blog.csdn.net/zeroblack/article/details/12851607</a></p>
+<h3 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h3><h4 id="什么是数据链路层？"><a href="#什么是数据链路层？" class="headerlink" title="什么是数据链路层？"></a>什么是数据链路层？</h4><p>答：数据链路层是计算机网络的中的低层（OSI模型中的第二层），可简单的理解为是数据通道。主要作用是为上层（网络层）提供带有差错检测的不可靠传输服务。</p>
+<h4 id="数据链路和链路有什么区别？"><a href="#数据链路和链路有什么区别？" class="headerlink" title="数据链路和链路有什么区别？"></a>数据链路和链路有什么区别？</h4><p>答：链路是从一个结点到相邻结点的一段物理线路，而中间没有其他的交换结点。说白了，链路就相当于传输数据的载体。</p>
+<h4 id="计算机网络中共分几层（计算机网络的体系结构）？"><a href="#计算机网络中共分几层（计算机网络的体系结构）？" class="headerlink" title="计算机网络中共分几层（计算机网络的体系结构）？"></a>计算机网络中共分几层（计算机网络的体系结构）？</h4><p>答：计算机网络主要有OSI模型（七层）和TCP/IP模型（四层），当然，现在OSI已经不用了，我们就讲一下TCP/IP模型。为了学习研究方便， 我们把TCP/IP模型分为五层，从上至下分别是【应用层】【运输层】【网络层】【数据链路层】【物理层】</p>
+<h4 id="数据链路层要解决的问题有哪些？"><a href="#数据链路层要解决的问题有哪些？" class="headerlink" title="数据链路层要解决的问题有哪些？"></a>数据链路层要解决的问题有哪些？</h4><p><img src="/images/20131018135011593.jpeg" alt><br>数据链路层总共要解决三个大问题：封装成帧、透明传输、差错检测</p>
+<ol>
+<li>封装成帧：即把上层网络层传下来的数据分别添加首部和尾部，这样就构成了一个帧。【帧首部】和【帧尾部】重要作用是判断帧从哪开始发送，从哪结束，一般用一些特殊的字符代表。</li>
+<li>透明传输：什么叫透明传输？就是，不管你传什么数据，链路层都能给你传。实际存在的数据链路层对数据来说好像不存在一样。这就是透明传输。那为了让所有的数据都能通过数据链路层传输，我们该做什么呢？帧的数据部分都是要传输的内容，帧首部和帧尾部用来告诉接收方帧是否传完。那如果数据部分恰好含有帧的首部或者尾部怎么办？假设数据部分含有帧尾部的特殊字符，接收方就会认为这个帧传输结束了。这样就做不到透明传输了。解决办法：转义字符。</li>
+<li>差错检测：传输过程中，可能会发生0变1,1变0的情况，差错检测就是为了避免这种情况，检测到有问题的比特流，直接丢弃。差错检测的方法叫做 循环冗余检测CRC，本质就是用传输的二进制码除以一个发送方和接收方商议好的二进制数，然后双方检验。</li>
+</ol>
+<h3 id="广播信道"><a href="#广播信道" class="headerlink" title="广播信道"></a>广播信道</h3><h4 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h4><p>广播信道是一对多的通信，在局域网中使用的最广。那什么是局域网？网络为一个单位所拥有，且地理范围和站点数据均有限。</p>
+<p>局域网有3个有点：（1）有广播功能，从一个机器可以访问到整个网络 （2）方便扩展，设备的位置灵活可变 （3）提高了系统的可靠性、可用性、生存性。</p>
+<p>局域网按照网络拓扑方式分的话分为3中：（1）星形网 （2）总线网 （3）环形网 </p>
+<p>现在，网络发达了，大规模集成电路的质量上去了，所以用的最多的是星形网，星形网用一个集线器来接收信息并广播到所有的结点上。</p>
+<h4 id="以太网"><a href="#以太网" class="headerlink" title="以太网"></a>以太网</h4><p>以太网就是现在用的最广泛的局域网，共有两个标准。第一个是 DIX Ethernet V2，另一个是IEEE 802.3。    IEEE 802.3把局域网的链路层拆为两个子层，（1）逻辑链路控制LLC （2）媒体接入控制MAC。    由于各种原因，LLC已经基本不用了。所以我们着重介绍MAC</p>
+<p>讲MAC之前，我们需要先了解一下 适配器，适配器又叫网卡。网卡最大的功能是缓冲数据再发送，避免了网络数据率和总线数据率不同而可能引起的问题。每个适配器里都有一个独一无二的，固定的物理地址，这个物理地址就是我们所说的MAC地址。所谓广播就是集线器给局域网内的各个站点发送出此数据帧后，只有适配器的MAC地址与数据帧中的目的地址匹配的那个站才接收数据，其他的站就丢掉帧。</p>
+<p>以太网采用的协议CSMA/CD协议。 CSMA/CD的意思的载波监听多点接入/碰撞检测 （这里的载波不是指那种传输数据的载波，只是借用一个这个词）</p>
+<ol>
+<li>多点接入：就是说网络是总线型的（星形网也是总线型的一种）。CSMA/CD是双向交替通信（半双工通信）</li>
+<li>载波监听：不管发送前，还是发送中，每个站必须不停的检测信道。 发送前检测，是为了获得发送权，如果检测出信道中有数据，就不能发送。发送中检测，是为了及时发现有没有和其他的数据碰撞，也就是下面要说的碰撞检测</li>
+<li>碰撞检测：当两个或以上的站发传送的数据同时在总线上时，总线上的电压变化幅度就会变大，容易造成传输中的数据损坏。</li>
+</ol>
+<h4 id="以太网扩展"><a href="#以太网扩展" class="headerlink" title="以太网扩展"></a>以太网扩展</h4><ol>
+<li>物理层扩展</li>
+</ol>
+<p><img src="/images/20131021091815234.jpeg" alt></p>
+<ol start="2">
+<li>数据链路层扩展</li>
+</ol>
+<p><img src="/images/20131021092327312.jpeg" alt></p>
+<p>网桥就是这样的，把每个以太网称为一个【网段】，网桥就是用来连接各个网段的。<br>网桥依靠转发表来转发帧，转发表是通过网桥的【自学习】得到的。自学习就是每个经过网桥发送的站都经过记录（记录源地址和进入网桥的端口）</p>
+<p>网桥有几个优点：</p>
+<ul>
+<li>过滤通信量，增大吞吐量</li>
+<li>扩大了物理范围</li>
+<li>提高了可靠性</li>
+<li>可互连不同物理层，不同MAC子层和不同速率的以太网</li>
+</ul>
+<p>第二种扩展方式是【交换机】</p>
+<p>多接口的网桥——以太网交换机</p>
+<p>交换机和集线器区别在哪？</p>
+<p>集线器特点：这种局域网在逻辑上仍然是一个总线网，局域网上的各主机共享逻辑上的总线，使用的还是CSMA/CD协议（别忘了CSMA/CD协议是半双工方式工作的）。网络中各主机必须竞争传输媒体的控制，同一时刻至多只允许一个主机发送数据</p>
+<p>交换机特点：交换机的每个接口都直接与一个主机或另一个集线器相连，并且一般以全双工方式工作。用以太网交换机的话就可以把各种速率的以太网就都连到一起。并且以太网交换机可以轻松的实现【虚拟局域网VLAN】</p>
+<p>○交换机的本质类似于分区表，将广播时将全网广播变更为向某一部分网络广播，降低了碰撞概率，提高了信息传递效率。</p>
+<p>From：知乎</p>
+<p>交换机工作于数据链路层，用来隔离冲突域，连接的所有设备同属于一个广播域（子网），负责子网内部通信。</p>
+<p>路由器工作于网络层，用来隔离广播域（子网），连接的设备分属不同子网，工作范围是多个子网之间，负责网络与网络之间通信。</p>
+<p>举个例子：<br>家用宽带路由器，其实是交换机和路由器的结合体，有两个网络层接口，一个连接运营商网络，物理上也就是wan口，IP地址由运营商分配。另一个连接家庭网络，没有物理接口，IP地址由自己通过路由器管理界面配置，一般默认是192.168.1.1<br>那另外几个Lan口干什么用的？这就是交换机接口，和家庭网络接口相连，负责家庭网络内部通信。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/网络/" rel="tag"># 网络</a>
+          
+            <a href="/tags/IP/" rel="tag"># IP</a>
+          
+            <a href="/tags/TCP/" rel="tag"># TCP</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/13/Operating-Systems读书笔记/" rel="next" title="Operating Systems读书笔记(Virtualization)">
+                <i class="fa fa-chevron-left"></i> Operating Systems读书笔记(Virtualization)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/06/网络层/" rel="prev" title="网络层">
+                网络层 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/01/05/数据链路层/" data-title="数据链路层" data-url="https://xurongyang.github.io/2017/01/05/数据链路层/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="xurongyang">
+          <p class="site-author-name" itemprop="name">xurongyang</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/thinkingxu" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/xurongyang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据链路层"><span class="nav-number">1.</span> <span class="nav-text">数据链路层</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是数据链路层？"><span class="nav-number">1.1.</span> <span class="nav-text">什么是数据链路层？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据链路和链路有什么区别？"><span class="nav-number">1.2.</span> <span class="nav-text">数据链路和链路有什么区别？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#计算机网络中共分几层（计算机网络的体系结构）？"><span class="nav-number">1.3.</span> <span class="nav-text">计算机网络中共分几层（计算机网络的体系结构）？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据链路层要解决的问题有哪些？"><span class="nav-number">1.4.</span> <span class="nav-text">数据链路层要解决的问题有哪些？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#广播信道"><span class="nav-number">2.</span> <span class="nav-text">广播信道</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#定义"><span class="nav-number">2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#以太网"><span class="nav-number">2.2.</span> <span class="nav-text">以太网</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#以太网扩展"><span class="nav-number">2.3.</span> <span class="nav-text">以太网扩展</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">xurongyang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"rongyanggithub"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
